@@ -7,3 +7,6 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
+
+//compile new JS file
+import './javascript/method1';

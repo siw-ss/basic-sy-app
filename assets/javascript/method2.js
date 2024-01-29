@@ -1,0 +1,1 @@
+alert('method 2');
