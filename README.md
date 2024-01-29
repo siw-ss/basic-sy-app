@@ -5,6 +5,7 @@ Symfony Second Project
 $cd c:/xampp/htdocs
 $composer create-project symfony/skeleton:"6.3.*" my_project_directory
 $cd my_project_directory
+$php -S localhost:3000 -t public
 
 -CONTROLLER
 $ composer require symfony/maker-bundle --dev
