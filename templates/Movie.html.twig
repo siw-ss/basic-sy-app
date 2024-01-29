@@ -1,5 +1,8 @@
-<h1>Movie View Works</h1>
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h1>Movie View Works</h1>
 
-{% for movie in movies %}
-    <li> {{ movie.title }} </li>
-{% endfor %}
+    {% for movie in movies %}
+        <li> {{ movie.title }} </li>
+    {% endfor %}
+{% endblock %}
