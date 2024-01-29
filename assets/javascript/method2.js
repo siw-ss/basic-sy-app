@@ -1,1 +1,1 @@
-alert('method 2');
+console.log('method 2');
