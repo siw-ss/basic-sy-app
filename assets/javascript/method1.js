@@ -1,1 +1,1 @@
-console.log('method ONEE');
+console.log("method 1");
