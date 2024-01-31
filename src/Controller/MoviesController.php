@@ -22,7 +22,7 @@ class MoviesController extends AbstractController
         $repository = $this->em->getRepository(Movie::class);
         $movies = $repository->findAll();
 
-        return $this->render('Movie.html.twig',[
+        return $this->render('movies/index.html.twig',[
             'movies' => $movies,
         ]);
     }

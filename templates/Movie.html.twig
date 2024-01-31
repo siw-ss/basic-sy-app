@@ -1,8 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <h1 class="bg-blue-500 text-2xl text-center font-bold">Movie View Works</h1>
+    <h1 class="bg-blue-500 my-20 text-2xl text-center font-bold">Movie View Works</h1>
 
     {% for movie in movies %}
         <li> {{ movie.title }} </li>
     {% endfor %}
+
+    <img src="{{ asset('build/images/image1.13cd2ea2.jpg')}}" alt="img1" >
 {% endblock %}
