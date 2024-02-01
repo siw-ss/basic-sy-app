@@ -22,6 +22,7 @@ class MoviesController extends AbstractController
         $this->em = $em;
     }
 
+    //GET ALL MOVIES API
     #[Route('/', methods:['GET'], name: 'movies_app')]
     public function index(): Response
     {
@@ -30,6 +31,7 @@ class MoviesController extends AbstractController
         ]);
     }
 
+    //CREATE NEW MOVIE API
     #[Route('/movies/create', name: 'movies_create')]
     public function create(Request $request): Response
     {
@@ -66,11 +68,40 @@ class MoviesController extends AbstractController
         ]);
     }
     
+    //GET SPECIFIC MOVIE API
     #[Route('/movies/{id}', methods:['GET'], name: 'movies_show')]
     public function show($id): Response
     {
         return $this->render('movies/show.html.twig',[
             'movie' => $this->movieRepository->find($id)
+        ]);
+    }
+
+    //UPDATE A SPECIFIC MOVIE
+    #[Route('/movies/edit/{id}', name:'movies_edit')]
+    public function edit($id, Request $request):Response
+    {
+        $movie = $this->movieRepository->find($id);
+        $form = $this->createForm(MovieFormType::class, $movie);
+
+        $form->handleRequest($request);
+        $imagePath = $form->get('imagePath')->getData();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($imagePath) {
+                // handle image upload //
+            }else{
+                $movie->setTitle($form->get('title')->getData());
+                $movie->setReleaseYear($form->get('releaseYear')->getData());
+                $movie->setDescription($form->get('description')->getData());
+
+                $this->em->flush();
+                return $this->redirectToRoute('movies_app');
+            }
+        }
+        return $this->render('movies/edit.html.twig',[
+            'movie'=> $movie,
+            'form' => $form->createView(),
         ]);
     }
     
