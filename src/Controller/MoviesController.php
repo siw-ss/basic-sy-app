@@ -79,7 +79,7 @@ class MoviesController extends AbstractController
 
     //UPDATE A SPECIFIC MOVIE
     #[Route('/movies/edit/{id}', name:'movies_edit')]
-    public function edit($id, Request $request):Response
+    public function edit($id, Request $request): Response
     {
         $movie = $this->movieRepository->find($id);
         $form = $this->createForm(MovieFormType::class, $movie);
@@ -89,7 +89,26 @@ class MoviesController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($imagePath) {
-                // handle image upload //
+                if ($movie->getImagePath() !== null) {
+                    if (file_exists(
+                        $this->getParameter('kernel.project_dir') . $movie->getImagePath()
+                        )) {
+                            $this->GetParameter('kernel.project_dir') . $movie->getImagePath();
+                        }
+                        $newFileName = uniqid() . '.' . $imagePath->guessExtension();
+                        try {
+                            $imagePath->move(
+                                $this->getParameter('kernel.project_dir') . '/public/uploads',
+                                $newFileName
+                            );
+                        }catch(FileException $e){
+                            return new Response($e->getMessage());
+                        }
+                        $movie->setImagePath('/uploads/' . $newFileName);
+                        $this->em->flush();
+
+                        return $this->redirectToRoute('movies_app');
+                }
             }else{
                 $movie->setTitle($form->get('title')->getData());
                 $movie->setReleaseYear($form->get('releaseYear')->getData());
