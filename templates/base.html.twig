@@ -96,6 +96,14 @@
                                         {{app.user ? 'Logout':'Login'}}
                                     </a>
                                 </li>
+                                {% if app.user %} 
+                                <li class="mr-3">
+                                    <p class="inline-block text-gray-300 no-underline hover:text-gray-200 hover:text-underline py-2 px-4">
+                                        {{app.user.email}}
+                                        {{app.user.roles[0]}}
+                                    </p>
+                                </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </nav>
