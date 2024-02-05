@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class MoviesController extends AbstractController
@@ -26,7 +27,7 @@ class MoviesController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    //GET ALL MOVIES API
+    //GET ALL MOVIES API - TEMPLATE FORMAT RESPONSE
     #[Route('/', methods:['GET'], name: 'movies_app')]
     public function index(): Response
     {
@@ -35,7 +36,7 @@ class MoviesController extends AbstractController
         ]);
     }
     
-    //GET ALL MOVIES API
+    //GET ALL MOVIES API - JSON FORMAT RESPONSE
     #[Route('/movies', methods:['GET'], name: 'movies_get')]
     public function getmovies(): JsonResponse
     {
@@ -47,6 +48,25 @@ class MoviesController extends AbstractController
                     return $object->getId();
                 }
             ]);
+        return new JsonResponse(
+            $moviesJson,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json'],
+            true
+        );
+    }
+
+    //GET ALL MOVIES API - JSON FORMAT - NO ACTORS
+    #[Route('/moviesonly', methods:['GET'], name: 'movies_only')]
+    public function getonlymovies(): JsonResponse
+    {
+        $movies = $this->movieRepository->findAll();
+        $context = (new ObjectNormalizerContextBuilder())
+            ->withGroups('list_movies')
+            ->toArray();
+        //removed ManyToMany relation error with GROUPS and setting context
+        $moviesJson = $this->serializer->serialize(
+            $movies,'json', $context);
         return new JsonResponse(
             $moviesJson,
             Response::HTTP_OK,
