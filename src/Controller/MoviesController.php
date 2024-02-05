@@ -8,18 +8,22 @@ use App\Repository\MovieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class MoviesController extends AbstractController
 {
     private $em;
     private $movieRepository;
-    public function __construct(MovieRepository $movieRepository, EntityManagerInterface $em)
+    private $serializer;
+    public function __construct(MovieRepository $movieRepository, EntityManagerInterface $em, SerializerInterface $serializer)
     {
         $this->movieRepository = $movieRepository;
         $this->em = $em;
+        $this->serializer = $serializer;
     }
 
     //GET ALL MOVIES API
@@ -29,6 +33,26 @@ class MoviesController extends AbstractController
         return $this->render('movies/index.html.twig',[
             'movies' => $this->movieRepository->findAll()
         ]);
+    }
+    
+    //GET ALL MOVIES API
+    #[Route('/movies', methods:['GET'], name: 'movies_get')]
+    public function getmovies(): JsonResponse
+    {
+        $movies = $this->movieRepository->findAll();
+        $moviesJson = $this->serializer->serialize(
+            $movies,'json',[
+                //fixing circular ref error caused by ManyToMany relation
+                'circular_reference_handler' => function ($object) {
+                    return $object->getId();
+                }
+            ]);
+        return new JsonResponse(
+            $moviesJson,
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json'],
+            true
+        );
     }
 
     //CREATE NEW MOVIE API
